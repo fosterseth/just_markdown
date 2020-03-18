@@ -91,3 +91,15 @@ OrderedDict([(awx.main.models.unified_jobs.UnifiedJob_credentials,
              (awx.main.models.unified_jobs.UnifiedJob,
               [<PolymorphicQuerySet [<UnifiedJob: 2020-03-18 20:20:34.699446+00:00-416-successful>, <UnifiedJob: 2020-03-18 20:20:43.163874+00:00-417-successful>, <UnifiedJob: 2020-03-18 20:20:51.594965+00:00-418-successful>]>])])
 ```
+
+## Calling .delete() must grab pk list first
+
+Querysets make references to other tables, so before any deletion occurs we must grab the full list of every pk value from each queryset in the dictionary.
+
+```
+        del_dict = OrderedDict()
+        for model, instances in self.data.items():
+            del_dict.setdefault(model, [])
+            for inst in instances:
+                del_dict[model] += list(inst.values_list('pk', flat=True))
+ ```
