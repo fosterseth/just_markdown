@@ -14,14 +14,19 @@ for j in jobs:
 django's `Collector` class, which does the actual deletion, will attempt to load all objects of the queryset. This uses way too much memory and is slow.
 
 ## Optimizing Collector
-
-Don't load the objects, rather just keep the querysets
-
-example instead of
+### 1 Don't load the objects, rather just work with querysets
 
 `parent_objs = [getattr(obj, ptr.name) for obj in new_objs]`
 
-we do
+becomes
 
 `parent_objs = ptr.objects.filter(pk__in = new_objs.values_list('pk', flat=True))`
+
+### 2 Don't do pre- and post- signaling
+
+My profiling results showed that a lot of the time was spent during `send`. We can greatly speed up the deletion by skipping these signals.
+
+![](send_collect.png)
+
+
 
