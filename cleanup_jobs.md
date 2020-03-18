@@ -18,7 +18,7 @@ django's `Collector` class, which does the actual deletion, will attempt to load
 Because of foreign key contraints on `main_job` and nearly every other table - we cannot simply call delete at the SQL level.
 
 ## Optimizing Collector
-#### 1 Don't load the objects, rather just work with querysets
+#### 1. Don't load the objects, rather just work with querysets
 
 Anywhere that querysets were being converted to objects, I kept them as querysets
 
@@ -36,7 +36,7 @@ becomes
 
 `parent_objs = ptr.objects.filter(pk__in = new_objs.values_list('pk', flat=True))`
 
-#### 2 Don't do pre- and post- signaling
+#### 2. Don't do pre- and post- signaling
 
 Profiling results showed that a lot of the time was spent during `send`. We can greatly speed up the deletion by skipping these signals.
 
@@ -92,7 +92,7 @@ OrderedDict([(awx.main.models.unified_jobs.UnifiedJob_credentials,
               [<PolymorphicQuerySet [<UnifiedJob: 2020-03-18 20:20:34.699446+00:00-416-successful>, <UnifiedJob: 2020-03-18 20:20:43.163874+00:00-417-successful>, <UnifiedJob: 2020-03-18 20:20:51.594965+00:00-418-successful>]>])])
 ```
 
-## Calling .delete() must grab pk list first
+## Calling Collector.delete() must grab pk list first
 
 Querysets make references to other tables, so before any deletion occurs we must grab the full list of every pk value from each queryset in the dictionary.
 
