@@ -7,11 +7,15 @@ for j in jobs:
     j.delete()
 ```
 
-## Bulk delete doesn't work well either
+## a Bulk delete work well
 
 `Jobs.objects.filter(..).delete()`
 
 django's `Collector` class, which does the actual deletion, will attempt to load all objects of the queryset. This uses way too much memory and is slow.
+
+## deleting at SQL level doesn't work either
+
+Because of foreign key contraints on `main_job` and nearly every other table - we cannot simply call delete at the SQL level.
 
 ## Optimizing Collector
 ### 1 Don't load the objects, rather just work with querysets
@@ -45,3 +49,5 @@ Profiling results showed that a lot of the time was spent during `send`. We can 
 Note, this fast delete method can be used for any model, not just Job
 
 ## Comparing Old Collector to New Collector
+
+![](collect.png)
