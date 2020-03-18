@@ -42,7 +42,7 @@ Profiling results showed that a lot of the time was spent during `send`. We can 
 
 ![](send_collect.png)
 
-### Speed improvements
+## Speed improvements
 
 6 minutes to remove 1 million jobs
 
@@ -50,4 +50,43 @@ Note, this fast delete method can be used for any model, not just Job
 
 ## Comparing Old Collector to New Collector
 
-![](collect.png)
+`Collector.collect()` returns a dictionary of objects to be deleted
+
+### OLD
+```
+OrderedDict([(awx.main.models.unified_jobs.UnifiedJob_credentials,
+              {<UnifiedJob_credentials: UnifiedJob_credentials object (416)>,
+               <UnifiedJob_credentials: UnifiedJob_credentials object (417)>,
+               <UnifiedJob_credentials: UnifiedJob_credentials object (415)>}),
+             (awx.main.models.jobs.JobLaunchConfig,
+              {<JobLaunchConfig: job launch config-416>,
+               <JobLaunchConfig: job launch config-417>,
+               <JobLaunchConfig: job launch config-418>}),
+             (awx.main.models.jobs.JobHostSummary,
+              {<JobHostSummary: localhost changed=0 dark=0 failures=0 ignored=0 ok=2 processed=1 rescued=0 skipped=0>,
+               <JobHostSummary: localhost changed=0 dark=0 failures=0 ignored=0 ok=2 processed=1 rescued=0 skipped=0>,
+               <JobHostSummary: localhost changed=0 dark=0 failures=0 ignored=0 ok=2 processed=1 rescued=0 skipped=0>}),
+             (awx.main.models.jobs.Job,
+              {<Job: 2020-03-18 20:20:34.699446+00:00-416-successful>,
+               <Job: 2020-03-18 20:20:43.163874+00:00-417-successful>,
+               <Job: 2020-03-18 20:20:51.594965+00:00-418-successful>}),
+             (awx.main.models.unified_jobs.UnifiedJob,
+              {<UnifiedJob: 2020-03-18 20:20:34.699446+00:00-416-successful>,
+               <UnifiedJob: 2020-03-18 20:20:43.163874+00:00-417-successful>,
+               <UnifiedJob: 2020-03-18 20:20:51.594965+00:00-418-successful>})])
+```
+
+### NEW
+
+```
+OrderedDict([(awx.main.models.unified_jobs.UnifiedJob_credentials,
+              [<QuerySet [<UnifiedJob_credentials: UnifiedJob_credentials object (415)>, <UnifiedJob_credentials: UnifiedJob_credentials object (416)>, <UnifiedJob_credentials: UnifiedJob_credentials object (417)>]>]),
+             (awx.main.models.jobs.JobLaunchConfig,
+              [<QuerySet [<JobLaunchConfig: job launch config-416>, <JobLaunchConfig: job launch config-417>, <JobLaunchConfig: job launch config-418>]>]),
+             (awx.main.models.jobs.JobHostSummary,
+              [<QuerySet [<JobHostSummary: localhost changed=0 dark=0 failures=0 ignored=0 ok=2 processed=1 rescued=0 skipped=0>, <JobHostSummary: localhost changed=0 dark=0 failures=0 ignored=0 ok=2 processed=1 rescued=0 skipped=0>, <JobHostSummary: localhost changed=0 dark=0 failures=0 ignored=0 ok=2 processed=1 rescued=0 skipped=0>]>]),
+             (awx.main.models.jobs.Job,
+              [<PolymorphicQuerySet [<Job: 2020-03-18 20:20:34.699446+00:00-416-successful>, <Job: 2020-03-18 20:20:43.163874+00:00-417-successful>, <Job: 2020-03-18 20:20:51.594965+00:00-418-successful>]>]),
+             (awx.main.models.unified_jobs.UnifiedJob,
+              [<PolymorphicQuerySet [<UnifiedJob: 2020-03-18 20:20:34.699446+00:00-416-successful>, <UnifiedJob: 2020-03-18 20:20:43.163874+00:00-417-successful>, <UnifiedJob: 2020-03-18 20:20:51.594965+00:00-418-successful>]>])])
+```
