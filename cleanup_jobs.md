@@ -18,7 +18,7 @@ django's `Collector` class, which does the actual deletion, will attempt to load
 Because of foreign key contraints on `main_job` and nearly every other table - we cannot simply call delete at the SQL level.
 
 ## Optimizing Collector
-### 1 Don't load the objects, rather just work with querysets
+#### 1 Don't load the objects, rather just work with querysets
 
 Anywhere that querysets were being converted to objects, I kept them as querysets
 
@@ -36,7 +36,7 @@ becomes
 
 `parent_objs = ptr.objects.filter(pk__in = new_objs.values_list('pk', flat=True))`
 
-### 2 Don't do pre- and post- signaling
+#### 2 Don't do pre- and post- signaling
 
 Profiling results showed that a lot of the time was spent during `send`. We can greatly speed up the deletion by skipping these signals.
 
@@ -53,7 +53,7 @@ Note, this fast delete method can be used for any model, not just Job
 `Collector.collect()` returns a dictionary of objects to be deleted
 `Collector.sort()` sorts this dictionary in order of deletion. This avoids foreign key contraint errors. For example, `Job` must be deleted before `UnifiedJob`.
 
-### OLD
+##### OLD
 ```
 OrderedDict([(awx.main.models.unified_jobs.UnifiedJob_credentials,
               {<UnifiedJob_credentials: UnifiedJob_credentials object (416)>,
@@ -77,7 +77,7 @@ OrderedDict([(awx.main.models.unified_jobs.UnifiedJob_credentials,
                <UnifiedJob: 2020-03-18 20:20:51.594965+00:00-418-successful>})])
 ```
 
-### NEW
+##### NEW
 
 ```
 OrderedDict([(awx.main.models.unified_jobs.UnifiedJob_credentials,
