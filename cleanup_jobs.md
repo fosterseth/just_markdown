@@ -7,13 +7,13 @@ for j in jobs:
     j.delete()
 ```
 
-## a Bulk delete work well
+## Attempt 1: a Bulk delete doesn't work well
 
 `Jobs.objects.filter(..).delete()`
 
 django's `Collector` class, which does the actual deletion, will attempt to load all objects of the queryset. This uses way too much memory and is slow.
 
-## deleting at SQL level doesn't work either
+## Attempt 2: deleting at SQL level doesn't work either
 
 Because of foreign key contraints on `main_job` and nearly every other table - we cannot simply call delete at the SQL level.
 
