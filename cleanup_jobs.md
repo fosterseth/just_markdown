@@ -34,9 +34,14 @@ becomes
 
 ### 2 Don't do pre- and post- signaling
 
-My profiling results showed that a lot of the time was spent during `send`. We can greatly speed up the deletion by skipping these signals.
+Profiling results showed that a lot of the time was spent during `send`. We can greatly speed up the deletion by skipping these signals.
 
 ![](send_collect.png)
 
+### Speed improvements
 
+6 minutes to remove 1 million jobs
 
+Note, this fast delete method can be used for any model, not just Job
+
+## Comparing Old Collector to New Collector
