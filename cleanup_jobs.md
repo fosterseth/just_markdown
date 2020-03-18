@@ -51,6 +51,7 @@ Note, this fast delete method can be used for any model, not just Job
 ## Comparing Old Collector to New Collector
 
 `Collector.collect()` returns a dictionary of objects to be deleted
+`Collector.sort()` sorts this dictionary in order of deletion. This avoids foreign key contraint errors. For example, `Job` must be deleted before `UnifiedJob`.
 
 ### OLD
 ```
