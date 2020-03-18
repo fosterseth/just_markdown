@@ -16,6 +16,16 @@ django's `Collector` class, which does the actual deletion, will attempt to load
 ## Optimizing Collector
 ### 1 Don't load the objects, rather just work with querysets
 
+Anywhere that querysets were being converted to objects, I kept them as querysets
+
+![](add_old.png)
+
+becomes
+
+![](add_new.png)
+
+Anywhere that assumed a list of objects, I changed to work with querysets
+
 `parent_objs = [getattr(obj, ptr.name) for obj in new_objs]`
 
 becomes
