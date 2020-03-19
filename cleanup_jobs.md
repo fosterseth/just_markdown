@@ -104,3 +104,9 @@ Querysets make references to other tables, so before any deletion occurs we must
             for inst in instances:
                 del_dict[model] += list(inst.values_list('pk', flat=True))
  ```
+
+## Going Forward
+
+Matt Jones mentioned adding these details to our architecture docs
+
+Possibly getting these changes integrated into Django itself
